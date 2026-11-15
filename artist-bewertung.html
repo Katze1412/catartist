@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Campus Festival – Artist-Bewertung</title>
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--tx:#1d1d1b;--mu:#6b6a65;--bd:#ddd9d0;--ac:#1f7a5a;--ja:#1f7a5a;--vl:#b7791f;--ne:#b23a48;color-scheme:light;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161615;--card:#212120;--tx:#eeece6;--mu:#9a988f;--bd:#383835;--ac:#4cc194;--ja:#4cc194;--vl:#e0a93f;--ne:#e5707e;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#161615;--card:#212120;--tx:#eeece6;--mu:#9a988f;--bd:#383835;--ac:#4cc194;--ja:#4cc194;--vl:#e0a93f;--ne:#e5707e;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+main{max-width:720px;margin:0 auto;padding:12px}
+h1{font-size:1.25rem;margin:4px 0 2px}
+.sub{color:var(--mu);font-size:.9rem;margin-bottom:10px}
+.bar{height:8px;background:var(--bd);border-radius:4px;overflow:hidden;margin:6px 0 12px}
+.bar i{display:block;height:100%;background:var(--ac);width:0;transition:width .2s}
+.tools{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);padding:6px 0;z-index:2}
+input[type=search]{width:100%;padding:10px;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--tx);font:inherit;margin-bottom:8px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+button{font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:999px;padding:7px 12px;cursor:pointer}
+button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px;margin:10px 0}
+.card.done{opacity:.92}
+.hd{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.nm{font-weight:650;font-size:1.05rem;overflow-wrap:anywhere}
+.nr{color:var(--mu);font-size:.85rem;margin-right:6px}
+a.sp{white-space:nowrap;text-decoration:none;color:#fff;background:var(--ac);padding:7px 12px;border-radius:999px;font-size:.9rem}
+.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.row label{display:flex;gap:6px;align-items:center;color:var(--mu);font-size:.9rem}
+.r button[data-v=ja].on{background:var(--ja);border-color:var(--ja)}
+.r button[data-v=vielleicht].on{background:var(--vl);border-color:var(--vl)}
+.r button[data-v=nein].on{background:var(--ne);border-color:var(--ne)}
+.st button{border:0;background:none;padding:2px 3px;font-size:1.4rem;color:var(--bd);line-height:1}
+.st button.on{background:none;color:var(--vl)}
+textarea{width:100%;min-height:64px;margin-top:10px;padding:9px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx);font:inherit;resize:vertical}
+.ex{margin-top:16px;padding-top:12px;border-top:1px solid var(--bd)}
+.ex textarea{min-height:200px;font:13px/1.4 ui-monospace,Menlo,Consolas,monospace}
+.msg{color:var(--mu);font-size:.85rem;margin-top:6px}
+.empty{color:var(--mu);text-align:center;padding:30px 0}
+.tabs{display:flex;gap:6px;margin:4px 0 8px}
+.nav{display:flex;gap:8px;align-items:center;justify-content:space-between;margin:10px 0}
+.nav span{color:var(--mu);font-size:.9rem}
+.pl{margin:8px 0}.pl iframe{width:100%;height:352px;border:0;border-radius:12px}
+.nolink{color:var(--mu);font-size:.85rem}
+button:disabled{opacity:.4;cursor:default}
+</style></head><body><main>
+<h1>Campus Festival – Artist-Bewertung</h1>
+<div class="sub" id="prog"></div>
+<div class="bar"><i id="bar"></i></div>
+<div class="tabs" id="tabs"></div>
+<div class="tools" id="tools">
+<input type="search" id="q" placeholder="Artist suchen …" aria-label="Artist suchen">
+<div class="chips" id="chips"></div>
+</div>
+<div id="list"></div>
+<div class="ex">
+<button id="exb">Auswahl als Text exportieren</button>
+<textarea id="ext" readonly hidden></textarea>
+<div class="msg" id="exm"></div>
+<div class="msg">Deine Einträge werden nur in diesem Browser gespeichert. Für eine Sicherung: exportieren und den Text irgendwo ablegen.</div>
+</div>
+</main>
+<script>
+const A=[["Katie Drives", "6sJHVAnPiDsrsXU2myom2b"], ["I Jah Dynasty", "60RDFkImPwr4lXj9b9ZOKf"], ["LUCIDEZ", "5NrAmJbatUYXKMeY79swG2"], ["VAVUNETTHA", "6evSYxDlR6ecNHJBdMvVHp"], ["amelie", "7cEnAUBptjGti4uq3nkGoV"], ["Isi I", "79AhxtltVJRiqLpkfBNz5b"], ["tosha", "5jkiK9die380dtxct1EnEQ"], ["Levin", "49kL5PYfF1S3I9753ZNi87"], ["Jovan", "02SsWgyEzSvPkvNrLs7Yti"], ["Soda Frizzante", "4QdKjuDlYNONvqew6Ydy4k"], ["Baba Blakes", "55sIdXMuyRafLJo665SJlq"], ["Leroy Jönsson", "3U9RSMKzGKTqJ6byYE6Fto"], ["NATIVO", "7aQ3RaQKDs5QxpOrG8Yx3u"], ["MØMNT", "7cAgjEysf2v1dB0cqRROOH"], ["Jolie Moekats", "3aDfUiv6lTGqphUmyvlSc3"], ["Melvin Hein", "3MfST3jSD77FnN10ZTp1VW"], ["DEEP IN MOON", "1C4UnNgSlJlevoIsBUwBeJ"], ["This Time For Real", "47z3NRyycHK5OIsYmZ5dYr"], ["VONT", "1CVYs3Upx1GArUY13hUaNs"], ["JoschY", "2RJA1FiOHmOXTRU6OEzoZn"], ["SKFELLAS", "2BcHaPcJwhWQOQkbyDIfP1"], ["flimr", "40EpNwZjgDPzd3vYKJcinL"], ["the glitch youth", "4SWPJBZO6HbUKIismCmWLB"], ["MONOKROM", "7kgQKC7sEEbBrqA8f0kRhi"], ["Simon Will", "4mcNxOvVrDyhKUJHGMnl9B"], ["clausy", "39SmDqXeAph1ew72T63pjQ"], ["emi x", "5kDJnYkE7Xm5zgEsJHb23u"], ["Sinus", "6DPAQpHLo9eeC7jZp3mCEx"], ["Die Mension", "63DdbgJH6aZljv1RDgrK5F"], ["Aleyna", "46kCUKOgib9MWOFJVcAF6V"], ["Anna Grey", "5SFwozJTdBZNUFYYrAqH4q"], ["Baran Kok", "0h5l8UYxSk3xeGGlSXgpIZ"], ["Booz", "6TuVQLhn2QGz4ro1RAzXyc"], ["Bruchbude", "1qmBzZ6fokNBJqlPxrID7U"], ["D1OS7", "4VAtLf7trrhEXVkCZBrXKs"], ["Paula Engels", "1tO0z6nFsDt5mHYNrSPC0b"], ["Tiavo", "13XOdftLPuWTn5iH2bUq2B"], ["Hey Julis!", "6FOzDPixUiunVoo7pLiV5p"], ["Kiarababa", "2gRcuby898lRpJlaFVNTos"], ["Mieze", "7M4NzPON3JqwE3GRfdg7eU"], ["Goldie 333", "2OCYYcJ4cS1ocDTravHg5B"], ["SOFFIE", "4zdZ6gGi9gBJZmCNun0Jhj"], ["ELLA STERN", "4JqjErIJOUuM9VSJdSsmxd"], ["Udo West", "6LjOtJ9U1bUN331ChKrw8q"], ["Jonny Mahoro", "6yo5P4iDSOU6JnCRGJfU98"], ["Brainscha", "1Kfs1APBFrTdFh1QWVPqr0"], ["None Of Our Business", "5jCvEmRxJ0MxGj1OLwkyfH"], ["KENITRA", "2oaut10IbcAqc0MW7KJ1UH"], ["NEEVE", "6Ais7UkieGvrmSxQ8eAull"], ["KYTES", "1q8H46YhdCtAO8tXHIWe2d"], ["LOTTE", "3gqabzO7zvHVzAIT0Nxqa3"], ["Cordoba78", "2GNQkf6PWF0octGR2XzpQt"], ["ROSMARIN", "1uvUgsd70vqSzaF4bl3kZK"], ["Crimson Bloom", "39y1x1n03g7NNlkPAIu0p3"], ["PAULINKO", "6q19W6LjTlGIOtq4n0Hc54"], ["LGoony", "0aZu9zUfF2EgTHyBbZlW1C"], ["semia", "0IF6zVpg2U6F2LRsabajeR"], ["Patina Records", "5QOw8cB4JNLNK36M6X5KAh"], ["COSMODROME", "3KtQUniaGg80PBRIlZDFBv"], ["grüßevonmicha", "58dIBQFFucL0LbUY4XfJcC"], ["DEER ANNA", "5hABsIK82aH9pts5yoZO6V"], ["curcuma", "2j01wxGg7y9T5qUG8V5Dip"], ["Selene", "3Mg9i6HVFg0ETCcGMqNhU9"], ["mathi", "2WdZDDcWNpEKsQjSetoZE4"], ["KORD", "10eOhWMO6HsEnrkASAstOP"], ["K.L.A.U.S", "45rBSlrgW9EUXcva3k6k4w"], ["Cari Cari", "0ey6crPk5fXQWkq21iPTMV"], ["MVRTN", "0CDOISKk4hn3zxq0mopdZt"], ["Cava", "43J6iItIIExbh3sEHISaD6"], ["Drangsal", "16rfiZrUbpoIJKqvJjbOk1"], ["Juli Gilde", "4s1eFPN3Rvn8F56Rzs8UWS"], ["Vincent Dellwig", "32lvF6XAHbBqfiXuLvX7Du"], ["Good Time Gang", "1E7vOhc0zzj1fTwQ0mn6IN"], ["Niemals", "1yY1FbNGJVyaTQQ62PYv9y"], ["TOCHTER", "3ygi0RTsXTi7zPVp5Be9fR"], ["Annie Chops", "3aiBwSS5DPzOsSMF5lHpVj"], ["The Maestros", "0SojVDizSNVND98OMqFJeS"], ["Snakehands", "7ygCE8S7HWg5QdWZhKzSnC"], ["REPLEKA", "4iVR8wt6OFoMshDQa5MM0L"], ["Basic Pigeon", "0pVBIwYKHt96mCKQE6p8mi"], ["Haus F", "29oAnuHTt0nstMUpXooF6R"], ["NoisyGlam", "21VkRil9kRl817dwNRnQKy"], ["GRAF FIDI", "4jdXf03qDxwe4Gk4i27EfM"], ["Hörbie Schmidt Band", "1ubJeKmsDIlWfB8BDpdMbx"], ["Mira Zounogo", "0GmleWvK5ROBe40IG3kqeT"], ["Kerosin95", "43lLFqwBfXJP3T5ZsL6E2x"], ["Lara Hulo", "7uIuNffVj9hfFYnh8r27P0"], ["Bekkaa", "7k37c7AypimVqHqmAUR1aZ"], ["lovehead", "66RYRcCpcfJqF3TwqCbUce"], ["Dilla", "17l4XlVVWNktDeJDigQ3HJ"], ["Marlo Grosshardt", "0oUy6JfoeDteAPMDi1lNJo"], ["badmómzjay", "7oWrEQO1d3klp0Qrfh7a5h"], ["Aylo", "5ggr9FUq9cjogKBxQmI2ZO"], ["KRISCHAN", "5KFGB68TTW3x2GFT8o00rL"], ["LASSE", "6cFfxBvqdceC1FnCzEqOA6"], ["MYDE", "7n9n8BOlpri3XUQdHWq8yc"], ["misteruniverse", "5OdFW9kvYnp7aD5l2PO2qn"], ["Grand Eugene", "787lTIpdsNwvYiDlMu0i3l"], ["Ramen Junge", "76jEfyolvx8eIM6ENhQqzg"], ["Keno.", "3ZueJVlFGg6ayAZlInpKOq"], ["Josiff", "1QLihA2bwsLIF15m3hnQZU"], ["Iltis Peak", ""], ["tooloudfortheroom", "74DOh9R3aqr9X9hQ3qsmwO"], ["DUNKELGRAU", "74lL23lrvGtzYoMlf9EiOE"], ["Dueja", "1QKx9HbmmkV4FgL2nkFVRl"], ["futurebae", "0UYSigAjotRo84aypVTw0Q"], ["Norlyz", "1eNnFAT5eH18dMP4zVsD5T"], ["YukaFrita", "", "https://www.instagram.com/yukafrita_"], ["Tårer", "3UmNzkvalkydxd4LoQ2A3A"], ["Cheaper World", "4FHU4imGG4G3O45cYkOYLZ"]];
+const KEY="campus-festival-v1";
+let S={};try{S=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){}
+let F="alle",Q="",M="liste",cur=0;
+const U=i=>A[i][2]||(A[i][1]?"https://open.spotify.com/artist/"+A[i][1]:"");
+const lnk=i=>{const u=U(i);return u?'<a class="sp" target="_blank" rel="noopener" href="'+u+'">'+(u.includes("instagram")?"Instagram":"Spotify")+' ↗</a>':'<span class="nolink">kein Link</span>'};
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const g=i=>S[i]||(S[i]={h:false,r:"",s:0,n:""});
+const FL=[["alle","Alle"],["offen","Offen"],["ja","Ja"],["vielleicht","Vielleicht"],["nein","Nein"],["notiz","Mit Notiz"]];
+function match(i){const x=S[i]||{h:false,r:"",s:0,n:""};
+ if(F==="offen"&&x.h)return false;
+ if(["ja","vielleicht","nein"].includes(F)&&x.r!==F)return false;
+ if(F==="notiz"&&!x.n.trim())return false;
+ return A[i][0].toLowerCase().includes(Q)}
+function prog(){const h=A.filter((a,i)=>S[i]&&S[i].h).length;
+ document.getElementById("prog").textContent=h+" von "+A.length+" angehört";
+ document.getElementById("bar").style.width=(h/A.length*100)+"%"}
+function paint(c,i){const x=g(i);
+ c.classList.toggle("done",x.h);
+ c.querySelector(".hk").checked=x.h;
+ c.querySelectorAll(".r button").forEach(b=>b.classList.toggle("on",b.dataset.v===x.r));
+ c.querySelectorAll(".st button").forEach(b=>b.classList.toggle("on",+b.dataset.s<=x.s))}
+function card(i){const x=g(i),c=document.createElement("div");c.className="card";
+ c.innerHTML='<div class="hd"><div class="nm"><span class="nr">'+(i+1)+'</span></div>'+lnk(i)+'</div>'+
+ '<div class="row"><label><input type="checkbox" class="hk"> angehört</label></div>'+
+ '<div class="row r"><button data-v="ja">Ja</button><button data-v="vielleicht">Vielleicht</button><button data-v="nein">Nein</button></div>'+
+ '<div class="row st">'+[1,2,3,4,5].map(n=>'<button data-s="'+n+'" aria-label="'+n+' Sterne">★</button>').join("")+'</div>'+
+ '<textarea placeholder="Notizen …"></textarea>';
+ c.querySelector(".nm").append(document.createTextNode(A[i][0]));
+ const t=c.querySelector("textarea");t.value=x.n;
+ t.addEventListener("input",()=>{g(i).n=t.value;save()});
+ c.querySelector(".hk").addEventListener("change",e=>{g(i).h=e.target.checked;save();paint(c,i);prog()});
+ c.querySelectorAll(".r button").forEach(b=>b.addEventListener("click",()=>{const v=b.dataset.v;g(i).r=g(i).r===v?"":v;if(g(i).r)g(i).h=true;save();paint(c,i);prog()}));
+ c.querySelectorAll(".st button").forEach(b=>b.addEventListener("click",()=>{const n=+b.dataset.s;g(i).s=g(i).s===n?0:n;save();paint(c,i)}));
+ if(M==="liste"&&A[i][1]){const b=document.createElement("button");b.textContent="▶ Hören";b.addEventListener("click",()=>{cur=i;setM("hoeren")});c.querySelector(".row").appendChild(b)}
+ paint(c,i);return c}
+function render(){const l=document.getElementById("list");l.innerHTML="";document.getElementById("tools").hidden=M!=="liste";
+ if(M==="hoeren"){listen(l);prog();return}
+ let n=0;A.forEach((a,i)=>{if(match(i)){l.appendChild(card(i));n++}});
+ if(!n){l.innerHTML='<div class="empty">Keine Treffer.</div>'}
+ prog()}
+function go(d){cur=Math.max(0,Math.min(A.length-1,cur+d));try{localStorage.setItem(KEY+"-cur",cur)}catch(e){}render();window.scrollTo(0,0)}
+function nav(){const d=document.createElement("div");d.className="nav";
+ d.innerHTML='<button>← Zurück</button><span>'+(cur+1)+' von '+A.length+'</span><button>Weiter →</button>';
+ const b=d.querySelectorAll("button");b[0].disabled=cur===0;b[1].disabled=cur===A.length-1;
+ b[0].addEventListener("click",()=>go(-1));b[1].addEventListener("click",()=>go(1));return d}
+function listen(l){l.appendChild(nav());const p=document.createElement("div");p.className="pl";
+ if(A[cur][1]){const f=document.createElement("iframe");f.src="https://open.spotify.com/embed/artist/"+A[cur][1];f.allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture";f.title=A[cur][0];p.appendChild(f)}
+ else p.innerHTML='<div class="nolink">Für diesen Artist gibt es keinen Spotify-Player.</div>';
+ l.appendChild(p);l.appendChild(card(cur));l.appendChild(nav())}
+const tb=document.getElementById("tabs");
+[["liste","Liste"],["hoeren","Hören"]].forEach(([k,t])=>{const b=document.createElement("button");b.textContent=t;b.dataset.k=k;b.addEventListener("click",()=>setM(k));tb.appendChild(b)});
+function setM(k){M=k;try{localStorage.setItem(KEY+"-cur",cur)}catch(e){}tb.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x.dataset.k===M));render();window.scrollTo(0,0)}
+const ch=document.getElementById("chips");
+FL.forEach(([k,t])=>{const b=document.createElement("button");b.textContent=t;b.dataset.k=k;
+ b.addEventListener("click",()=>{F=k;ch.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x.dataset.k===F));render()});ch.appendChild(b)});
+ch.firstChild.classList.add("on");
+document.getElementById("q").addEventListener("input",e=>{Q=e.target.value.trim().toLowerCase();render()});
+document.getElementById("exb").addEventListener("click",()=>{
+ const G=[["ja","JA"],["vielleicht","VIELLEICHT"],["nein","NEIN"],["","NOCH OFFEN / UNBEWERTET"]];let o=[];
+ G.forEach(([k,t])=>{const L=A.map((a,i)=>[a[0],S[i]||{h:false,r:"",s:0,n:""}]).filter(([a,x])=>x.r===k);
+  if(!L.length)return;o.push(t+" ("+L.length+")");
+  L.forEach(([a,x])=>o.push("- "+a+(x.s?" ("+x.s+"/5)":"")+(x.n.trim()?": "+x.n.trim().replace(/\n+/g," "):"")));o.push("")});
+ const t=document.getElementById("ext");t.hidden=false;t.value=o.join("\n").trim();t.focus();t.select();
+ const m=document.getElementById("exm");m.textContent="";
+ try{navigator.clipboard.writeText(t.value).then(()=>m.textContent="In die Zwischenablage kopiert.",()=>m.textContent="Text markiert – bitte manuell kopieren.")}catch(e){m.textContent="Text markiert – bitte manuell kopieren."}});
+try{cur=Math.min(A.length-1,+localStorage.getItem(KEY+"-cur")||0)}catch(e){}
+setM("liste");
+</script></body></html>
